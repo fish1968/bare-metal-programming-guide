@@ -1546,7 +1546,7 @@ WEAK_ALIAS void HardFault_Handler(void);
 WEAK_ALIAS void MemManage_Handler(void);
 ...
 __attribute__((section(".vectors"))) void (*const tab[16 + 91])(void) = {
-    0, _reset, NMI_Handler, HardFault_Handler, MemManage_Handler,
+    _estack, _reset, NMI_Handler, HardFault_Handler, MemManage_Handler,
     ...
 ```
 
