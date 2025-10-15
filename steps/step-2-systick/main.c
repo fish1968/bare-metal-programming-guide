@@ -38,6 +38,8 @@ struct gpio {
 
 // Enum values are per datasheet: 0, 1, 2, 3
 enum { GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MODE_AF, GPIO_MODE_ANALOG };
+enum { GPIO_SPEED_LOW, GPIO_SPEED_MEDIUM, GPIO_SPEED_HIGH, GPIO_SPEED_VERY_HIGH };
+enum { GPIO_PULL_NO_PULL, GPIO_PULL_PULL_UP, GPIO_PULL_PULL_DOWN, GPIO_PULL_RESERVED};
 
 static inline void gpio_set_mode(uint16_t pin, uint8_t mode) {
   struct gpio *gpio = GPIO(PINBANK(pin));  // GPIO bank
@@ -46,6 +48,20 @@ static inline void gpio_set_mode(uint16_t pin, uint8_t mode) {
   gpio->MODER |= (mode & 3U) << (n * 2);   // Set new mode
 }
 
+static inline void gpio_set_speed(uint16_t pin, uint8_t mode)
+{
+  struct gpio *gpio = GPIO(PINBANK(pin));
+  int n = PINNO(pin);
+  gpio->OSPEEDR &= ~(3U << (n * 2));
+  gpio->OSPEEDR |= ((mode & 3U) << (n * 2));
+}
+static inline void gpio_set_pull(uint16_t pin, uint8_t mode)
+{
+  struct gpio *gpio = GPIO(PINBANK(pin));
+  int n = PINNO(pin);
+  gpio -> PUPDR &= ~(3U << (n * 2));
+  gpio -> PUPDR |= ((mode & 3U ) << (n * 2));
+}
 static inline void gpio_write(uint16_t pin, bool val) {
   struct gpio *gpio = GPIO(PINBANK(pin));
   gpio->BSRR = (1U << PINNO(pin)) << (val ? 0 : 16);
@@ -74,6 +90,7 @@ int main(void) {
   RCC->AHB1ENR |= BIT(PINBANK(led));     // Enable GPIO clock for LED
   systick_init(16000000 / 1000);         // Tick every 1 ms
   gpio_set_mode(led, GPIO_MODE_OUTPUT);  // Set blue LED to output mode
+  gpio_set_speed(led, GPIO_SPEED_MEDIUM);// set blue LED port to medium speed
   uint32_t timer = 0, period = 500;      // Declare timer and 500ms period
   for (;;) {
     if (timer_expired(&timer, period, s_ticks)) {
