@@ -11,9 +11,17 @@ else
   RM = rm -f
 endif
 
+# Variables
+ELF_FILE = firmware.elf
+ASM_FILE = firmware.s
+
+asm: $(ELF_FILE)
+	arm-none-eabi-objdump -d $(ELF_FILE) > $(ASM_FILE)
+
+
 build: firmware.bin
 
-firmware.elf: $(SOURCES)
+firmware.elf: $(SOURCES) link.ld
 	arm-none-eabi-gcc $(SOURCES) $(CFLAGS) $(LDFLAGS) -o $@
 
 firmware.bin: firmware.elf
