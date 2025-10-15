@@ -50,8 +50,8 @@ To proceed, the following tools are required:
 Start a terminal, and execute:
 
 ```sh
-$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-$ brew install gcc-arm-embedded make stlink git
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+brew install gcc-arm-embedded make stlink git
 ```
 
 ### Setup instructions for Linux (Ubuntu)
@@ -59,8 +59,8 @@ $ brew install gcc-arm-embedded make stlink git
 Start a terminal, and execute:
 
 ```sh
-$ sudo apt -y update
-$ sudo apt -y install gcc-arm-none-eabi make stlink-tools git
+sudo apt -y update
+sudo apt -y install gcc-arm-none-eabi make stlink-tools git
 ```
 
 ### Setup instructions for Windows
@@ -376,7 +376,7 @@ Oftentimes, device SDKs have a startup.s file written in assembly.
 Let's compile our code. Start a terminal (or a command prompt on Windows) and execute:
 
 ```sh
-$ arm-none-eabi-gcc -mcpu=cortex-m4 main.c -c
+arm-none-eabi-gcc -mcpu=cortex-m4 main.c -c
 ```
 
 That works! The compilation produced a file `main.o` which contains
@@ -384,7 +384,7 @@ our minimal firmware that does nothing.  The `main.o` file is in ELF binary
 format, which contains several sections. Let's see them:
 
 ```sh
-$ arm-none-eabi-objdump -h main.o
+arm-none-eabi-objdump -h main.o
 ...
 Idx Name          Size      VMA       LMA       File off  Algn
   0 .text         00000002  00000000  00000000  00000034  2**1
@@ -526,13 +526,13 @@ there is nothing at that address, because at boot, `.data` section in the
 Now we are ready to produce a full firmware file `firmware.elf`:
 
 ```sh
-$ arm-none-eabi-gcc -T link.ld -nostdlib main.o -o firmware.elf
+arm-none-eabi-gcc -T link.ld -nostdlib main.o -o firmware.elf
 ```
 
 Let's examine sections in firmware.elf:
 
 ```sh
-$ arm-none-eabi-objdump -h firmware.elf
+arm-none-eabi-objdump -h firmware.elf
 ...
 Idx Name          Size      VMA       LMA       File off  Algn
   0 .vectors      000001ac  08000000  08000000  00010000  2**2
@@ -552,14 +552,14 @@ We're ready to flash this firmware! First, extract sections from the
 firmware.elf into a single contiguous binary blob:
 
 ```sh
-$ arm-none-eabi-objcopy -O binary firmware.elf firmware.bin
+arm-none-eabi-objcopy -O binary firmware.elf firmware.bin
 ```
 
 And use `st-link` utility to flash the firmware.bin. Plug your board to the
 USB, and execute:
 
 ```sh
-$ st-flash --reset write firmware.bin 0x8000000
+st-flash --reset write firmware.bin 0x8000000
 ```
 
 Done! We've flashed a firmware that does nothing.
@@ -592,7 +592,7 @@ Now, we can invoke `make` with the action name (also called *target*) to execute
 a corresponding action:
 
 ```sh
-$ make action1
+make action1
 ```
 
 It is possible to define variables and use them in commands. Also, actions
@@ -635,7 +635,7 @@ There, we define compilation flags. The `?=` means that's a default value;
 we could override them from the command line like this:
 
 ```sh
-$ make build CFLAGS="-O2 ...."
+make build CFLAGS="-O2 ...."
 ```
 
 We specify `CFLAGS`, `LDFLAGS` and `SOURCES` variables.
@@ -647,14 +647,14 @@ expands to a target name - in our case, `firmware.elf`.
 Let's call `make`:
 
 ```
-$ make build
+make build
 arm-none-eabi-gcc main.c  -W -Wall -Wextra -Werror -Wundef -Wshadow -Wdouble-promotion -Wformat-truncation -fno-common -Wconversion -g3 -Os -ffunction-sections -fdata-sections -I. -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16  -Tlink.ld -nostartfiles -nostdlib --specs nano.specs -lc -lgcc -Wl,--gc-sections -Wl,-Map=firmware.elf.map -o firmware.elf
 ```
 
 If we run it again:
 
 ```sh
-$ make build
+make build
 make: Nothing to be done for `build'.
 ```
 
@@ -663,8 +663,8 @@ The `make` utility examines modification times for `main.c` dependency and
 But if we change `main.c`, then next `make build` will recompile:
 
 ```sh
-$ touch main.c # Simulate changes in main.c
-$ make build
+touch main.c # Simulate changes in main.c
+make build
 ```
 
 Now, what is left - is the `flash` target:
@@ -685,7 +685,7 @@ because `firmware.bin` depends on `firmware.elf`, and it in turn depends on
 
 ```sh
 # Develop code in main.c
-$ make flash
+make flash
 ```
 
 It is a good idea to add a clean target to remove build artifacts:
@@ -1095,7 +1095,7 @@ On my Mac workstation, I use `cu`. It also can be used on Linux. On Windows,
 using `putty` utility can be a good idea. Run a terminal and see the messages:
 
 ```sh
-$ cu -l /dev/YOUR_SERIAL_PORT -s 115200
+cu -l /dev/YOUR_SERIAL_PORT -s 115200
 hi
 hi
 ```
@@ -1747,7 +1747,7 @@ Explanation:
 This is the example output of the `make test` command described above:
 
 ```sh
-$ make test
+make test
 curl --fail ...
 {"success":true,"written":59904}
 curl --fail ...
